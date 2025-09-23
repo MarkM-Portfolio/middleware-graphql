@@ -1,0 +1,18 @@
+# This is the docker file for build the tester image
+
+FROM connections-docker.artifactory.cwp.pnp-hcl.com/application-tester
+
+# Copy in the test assets
+COPY lib /usr/src/app/tests/lib
+COPY tests /usr/src/app/tests
+COPY deployment/tests /usr/src/app/tests
+COPY package.json /usr/src/app/tests
+COPY package-lock.json /usr/src/app/tests
+
+# npm install and setup test project
+WORKDIR /usr/src/app/tests
+RUN ls -l
+RUN npm ci --production --registry https://artifactory.cwp.pnp-hcl.com/artifactory/api/npm/v-ess-npm-dev
+
+# reset to /app where npm start will launch the parent governor server
+WORKDIR /app

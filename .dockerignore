@@ -1,0 +1,8 @@
+*
+!deployment/tests
+!lib
+!node_modules
+!tests/runtest.sh
+!scripts/run.sh
+!package-lock.json
+!package.json

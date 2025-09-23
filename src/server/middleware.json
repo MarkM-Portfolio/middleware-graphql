@@ -1,0 +1,53 @@
+{
+  "initial:before": {
+    "loopback#favicon": {
+      "params": ""
+    }
+  },
+  "initial": {
+    "compression": {},
+    "cors": {
+      "params": {
+        "origin": false,
+        "credentials": true,
+        "maxAge": 86400
+      }
+    },
+    "helmet#xssFilter": {},
+    "helmet#frameguard": {
+      "params": [
+        "deny"
+       ]
+    },
+    "helmet#hsts": {
+      "params": {
+        "maxAge": 31536000,
+        "includeSubdomains": true,
+        "force": true,
+        "preload": true
+      }
+    },
+    "helmet#hidePoweredBy": {},
+    "helmet#ieNoOpen": {},
+    "helmet#noSniff": {},
+    "helmet#noCache": {
+      "enabled": false
+    }
+  },
+  "session": {},
+  "auth": {},
+  "parse": {},
+  "routes": {
+    "loopback#rest": {
+      "paths": [
+        "${restApiRoot}"
+      ]
+    }
+  },
+  "final": {
+    "loopback#urlNotFound": {}
+  },
+  "final:after": {
+    "strong-error-handler": {}
+  }
+}

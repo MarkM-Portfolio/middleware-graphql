@@ -1,0 +1,6 @@
+# Populate this from - curl -u<USERNAME>:<PASSWORD> https://artifactory.swg.usma.ibm.com/artifactory/api/npm/auth
+# to add authentication and registry details to your projects
+
+# Note this can be placed in the packages or once globally into ~/.npmrc
+# More details https://artifactory.swg.usma.ibm.com/artifactory/webapp/#/artifacts/browse/simple/General/v-ess-npm
+# https://apps.na.collabserv.com/wikis/home?lang=en-us#!/wiki/W28b8df99093e_468e_880f_000d19d33b5c/page/Artifactory%20NPM%20usage%20on%20CI%20pipeline

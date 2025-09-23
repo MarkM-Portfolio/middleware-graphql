@@ -1,0 +1,198 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: middleware-graphql
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+  selector:
+    matchLabels:
+      name: middleware-graphql
+      app: middleware-graphql
+      mService: middleware-graphql
+  template:
+    metadata:
+      name: middleware-graphql
+      labels:
+        name: middleware-graphql
+        app: middleware-graphql
+        mService: middleware-graphql
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: "type"
+                operator: In
+                values: ["generic"]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: "mService"
+                  operator: In
+                  values: [{{ .Values.name | quote }}]
+      containers:
+        - name: middleware-graphql
+{{- if .Values.global.onPrem }}
+          image:  {{ .Values.global.image.repository }}/middleware-graphql:{{ .Values.image.tag }}
+{{- else }}
+          image:  {{ .Values.image.repository }}/middleware-graphql:{{ .Values.image.tag }}
+{{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              cpu: {{ .Values.resources.service.limits.cpu }}
+              memory: {{ .Values.resources.service.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.service.requests.cpu }}
+              memory: {{ .Values.resources.service.requests.memory }}
+          env:
+          - name: NODE_TLS_REJECT_UNAUTHORIZED
+            value: "0"
+          - name: NODEJS_HEAP_MEMORY
+            value: {{ default "" .Values.resources.service.nodeJSHeapMemory | quote }}
+          - name: NODEJS_DEBUG
+            value: {{ default "" .Values.resources.service.nodeJSDebug | quote }}
+          - name: LOG_LEVEL
+            value: {{ .Values.env.logLevel }}
+          - name: ORIENT_CNX_INTERSERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-interservice-host
+          - name: ORIENT_CNX_INTERSERVICE_SCHEME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-interservice-scheme
+          - name: ORIENT_CNX_INTERSERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-interservice-port
+          - name: ORIENT_CNX_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-host
+          - name: ORIENT_CNX_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-port
+          - name: ORIENT_CNX_SCHEME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: orient-cnx-scheme
+          - name: CNX_INTERSERVICE_OPENGRAPH_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: cnx-interservice-opengraph-port
+          - name: DEPLOYMENT_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: deployment_type
+          - name: JWT_NAME
+            value: cnx_token
+          - name: JWT_EXPIRES_IN_MINUTES
+            valueFrom:
+              configMapKeyRef:
+                name: connections-env
+                key: jwt-expires-in-minutes
+          - name: CONNECTIONS_AUTH_TOKEN_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: ic-auth-token-name
+          - name: CONNECTIONS_PROFILES_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: ic-profiles-url
+          - name: CONNECTIONS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: ic-connections-url
+          - name: CONNECTIONS_HOMEPAGE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: ic-homepage-url
+          - name: REDIS_SERVICE_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: redis-node-service-name
+          - name: REDIS_SERVICE_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: redis-node-service-port
+          - name: REDIS_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: secret
+          - name: REDIS_AUTH_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: redis-auth-enabled
+          - name: REDIS_OPTIONS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.env.configMapKeyRef.name }}
+                key: redis-options
+          - name: VALIDATE_TOKEN_MATCH
+            value: "{{ .Values.env.validateTokenMatch }}"
+          ports:
+            - name: mwgraphql
+              containerPort: {{ .Values.service.internalPort }}
+          readinessProbe:
+            httpGet:
+              path: /healthy
+              port: {{ .Values.service.internalPort }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: {{ .Values.service.internalPort }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          volumeMounts:
+            - name: jwt-secret-vol
+              mountPath: /etc/jwt/jwt-secret
+            - name: redis-secret-vol
+              mountPath: /etc/redis/redis-secret
+      volumes:
+        - name: jwt-secret-vol
+          secret:
+            secretName: jwt-secret
+        - name: redis-secret-vol
+          secret:
+            secretName: redis-secret
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets.name }}

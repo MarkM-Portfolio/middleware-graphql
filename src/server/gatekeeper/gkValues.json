@@ -1,0 +1,26 @@
+{
+  "GraphQL-mocks": {
+    "description": "Enable/disable GraphQL mock resolvers",
+    "isEnabled": false,
+    "isUIexposed": false,
+    "isGlobal": true,
+    "orgs": {},
+    "groups": {}
+  },
+  "stacking-api-mocks": {
+    "description": "stacking api are mocked",
+    "isEnabled": false,
+    "isUIexposed": true,
+    "isGlobal": true,
+    "orgs": {},
+    "groups": {}
+  },
+  "stacking-api-normalizer": {
+    "description": "Enable stacking normalization, removal of duplicates",
+    "isEnabled": false,
+    "isUIexposed": false,
+    "isGlobal": true,
+    "orgs": {},
+    "groups": {}
+  }
+}

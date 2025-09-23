@@ -1,0 +1,23 @@
+{
+  "name": "middleware-graphql-tester",
+  "version": "0.0.1",
+  "license": "ICS",
+  "scripts": {
+    "test:healthy": "TEST_SUITE=governor node lib/tests/jasmine-runner.js"
+  },
+  "dependencies": {
+    "jasmine": "2.6.0",
+    "jasmine-spec-reporter": "4.1.0",
+    "@connections/utils-logger": "1.5.0",
+    "@connections/utils-orient-api": "*",
+    "@connections/utils-graphql-queries": "*",
+    "@connections/utils-ic-config": "*",
+    "@connections/utils-auth-web": "*",
+    "request": "2.81.0",
+    "isomorphic-fetch": "2.2.1"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  }
+}

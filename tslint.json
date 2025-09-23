@@ -1,0 +1,45 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "semicolon": [ true ],
+    "quotemark": [ true, "single" ],
+    "no-var-keyword": true,
+    "indent": [true, "spaces"],
+    "comment-format": [true, "check-space"],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type"
+    ],
+    "trailing-comma": [ false ],
+    "no-console": [ true ],
+    "curly": false,
+    "eofline": true,
+    "no-string-literal": false,
+    "object-literal-sort-keys": false,
+    "variable-name": false,
+    "ordered-imports": [ false ],
+    "max-line-length": [ false ],
+    "no-reference": false,
+    "no-var-requires": false,
+    "max-classes-per-file": [ false ],
+    "member-ordering": [ false ],
+    "no-empty": false,
+    "interface-name": [ false ],
+    "radix": false,
+    "no-conditional-assignment": false,
+    "no-namespace": [ false ],
+    "one-variable-per-declaration": [true],
+    "only-arrow-functions": [ false ],
+    "triple-equals": false,
+    "no-bitwise": false,
+    "prefer-const": true
+  },
+  "jsRules": {
+    "quotemark": [ true, "single" ],
+    "trailing-comma": [ false ]
+  }
+}

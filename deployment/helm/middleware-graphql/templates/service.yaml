@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: middleware-graphql
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - name: middleware-graphql
+      protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  type: {{ .Values.service.type }}
+  selector:
+    name: middleware-graphql

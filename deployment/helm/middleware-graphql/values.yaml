@@ -1,0 +1,65 @@
+# Default values for orient-web-client.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#Common
+name: middleware-graphql
+namespace: connections
+replicaCount: 3
+
+tag: latest
+
+image:
+  repository: connections-docker.artifactory.cwp.pnp-hcl.com
+  tag: latest
+  pullPolicy: IfNotPresent
+
+global:
+  onPrem: null
+
+imagePullSecrets:
+  name: myregkey
+
+service:
+  name: middleware-graphql
+#  type: NodePort
+  port        : 3000
+  externalPort: 3000
+  internalPort: 3000
+
+env:
+  configMapKeyRef:
+    name: connections-env
+  validateTokenMatch: "true"
+  logLevel: info
+
+rollingUpdate:
+  maxUnavailable: 1
+  maxSurge: 2
+
+tester:
+  testerTag: tester
+
+resources:
+  service:
+    limits:
+      cpu: "1"
+      memory: "500Mi"
+    requests:
+      cpu: "0.1"
+      memory: "75Mi"
+  tester:
+    limits:
+      cpu: "0.5"
+      memory: "400Mi"
+    requests:
+      cpu: "0.05"
+      memory: "75Mi"
+
+livenessProbe:
+  periodSeconds: 30
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  periodSeconds: 30
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
